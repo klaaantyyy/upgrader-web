@@ -112,4 +112,191 @@
         var first = form.querySelector('input[name="name"]');
         if (first) { first.focus(); }
     });
+
+    // ===== Config Slider =====
+    var configSliders = document.querySelectorAll('[data-slider]');
+    configSliders.forEach(function (slider) {
+        var track = slider.querySelector('[data-slider-track]');
+        var cards = track.querySelectorAll('.config-card');
+        var prevBtn = slider.querySelector('[data-slider-prev]');
+        var nextBtn = slider.querySelector('[data-slider-next]');
+        var dotsContainer = slider.querySelector('[data-slider-dots]');
+
+        var cardCount = cards.length;
+        var currentIndex = 0;
+        var cardsPerView = getCardsPerView();
+        var maxIndex = Math.max(0, cardCount - cardsPerView);
+        var isDragging = false;
+        var startX = 0;
+        var currentTranslate = 0;
+        var startTranslate = 0;
+        var animationId = null;
+
+        // Create dots
+        function createDots() {
+            dotsContainer.innerHTML = '';
+            var dotCount = maxIndex + 1;
+            for (var i = 0; i < dotCount; i++) {
+                var dot = document.createElement('button');
+                dot.className = 'config-slider__dot' + (i === 0 ? ' active' : '');
+                dot.setAttribute('type', 'button');
+                dot.setAttribute('aria-label', 'Конфигурация ' + (i + 1));
+                dot.addEventListener('click', function (e) {
+                    goToSlide(parseInt(e.target.dataset.index, 10));
+                });
+                dot.dataset.index = i;
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        function getCardsPerView() {
+            var width = slider.offsetWidth;
+            if (width >= 1050) return 3;
+            if (width >= 640) return 2;
+            return 1;
+        }
+
+        function getCardWidth() {
+            var card = cards[0];
+            if (!card) return 0;
+            var style = getComputedStyle(card);
+            var gap = 18; // CSS gap
+            return card.offsetWidth + gap;
+        }
+
+        function updateSlider(animate) {
+            cardsPerView = getCardsPerView();
+            maxIndex = Math.max(0, cardCount - cardsPerView);
+            if (currentIndex > maxIndex) currentIndex = maxIndex;
+
+            var cardWidth = getCardWidth();
+            currentTranslate = -currentIndex * cardWidth;
+
+            if (animate !== false) {
+                track.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            } else {
+                track.style.transition = 'none';
+            }
+            track.style.transform = 'translateX(' + currentTranslate + 'px)';
+
+            updateButtons();
+            updateDots();
+        }
+
+        function updateButtons() {
+            if (prevBtn) prevBtn.disabled = currentIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentIndex >= maxIndex;
+        }
+
+        function updateDots() {
+            var dots = dotsContainer.querySelectorAll('.config-slider__dot');
+            dots.forEach(function (dot, i) {
+                dot.classList.toggle('active', i === currentIndex);
+            });
+        }
+
+        function goToSlide(index) {
+            if (index < 0) index = 0;
+            if (index > maxIndex) index = maxIndex;
+            currentIndex = index;
+            updateSlider();
+        }
+
+        function nextSlide() {
+            goToSlide(currentIndex + 1);
+        }
+
+        function prevSlide() {
+            goToSlide(currentIndex - 1);
+        }
+
+        // Touch/Swipe support
+        function onDragStart(e) {
+            isDragging = true;
+            startX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            startTranslate = currentTranslate;
+            track.classList.add('dragging');
+            track.style.transition = 'none';
+            cancelAnimationFrame(animationId);
+        }
+
+        function onDragMove(e) {
+            if (!isDragging) return;
+            var clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            var diff = clientX - startX;
+            currentTranslate = startTranslate + diff;
+            track.style.transform = 'translateX(' + currentTranslate + 'px)';
+        }
+
+        function onDragEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            track.classList.remove('dragging');
+
+            var cardWidth = getCardWidth();
+            var moved = Math.round(-currentTranslate / cardWidth);
+            var targetIndex = moved;
+
+            // Snap to nearest
+            if (Math.abs(currentTranslate - startTranslate) > cardWidth * 0.15) {
+                if (currentTranslate < startTranslate) {
+                    targetIndex = Math.min(currentIndex + 1, maxIndex);
+                } else {
+                    targetIndex = Math.max(currentIndex - 1, 0);
+                }
+            } else {
+                targetIndex = currentIndex;
+            }
+
+            currentIndex = targetIndex;
+            updateSlider();
+        }
+
+        // Event listeners
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+
+        // Touch events
+        track.addEventListener('touchstart', onDragStart, { passive: true });
+        track.addEventListener('touchmove', onDragMove, { passive: true });
+        track.addEventListener('touchend', onDragEnd);
+
+        // Mouse events
+        track.addEventListener('mousedown', onDragStart);
+        window.addEventListener('mousemove', onDragMove);
+        window.addEventListener('mouseup', onDragEnd);
+
+        // Keyboard navigation
+        track.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            } else if (e.key === 'ArrowRight') {
+                e.preventDefault();
+                nextSlide();
+            }
+        });
+
+        // Resize handler
+        var resizeTimeout;
+        window.addEventListener('resize', function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                createDots();
+                updateSlider(false);
+            }, 150);
+        });
+
+        // IntersectionObserver to pause animations when not visible
+        var observer = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                track.style.transition = entry.isIntersecting ? 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none';
+            });
+        }, { rootMargin: '100px' });
+        observer.observe(slider);
+
+        // Initialize
+        createDots();
+        updateSlider(false);
+    });
 })();

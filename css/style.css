@@ -583,21 +583,56 @@ button, a {
     color: var(--muted);
 }
 
-/* ===== Конфигурации ===== */
-.configs-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+/* ===== Конфигурации (Slider) ===== */
+.config-slider {
+    position: relative;
+    padding: 0 28px 40px;  /* место для кнопок по бокам и точек снизу */
+}
+
+.config-slider__viewport {
+    overflow: hidden;
+}
+
+.config-slider__track {
+    display: flex;
     gap: 18px;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+    padding: 4px 0 12px;
+    user-select: none;
+}
+
+.config-slider__track.dragging {
+    transition: none;
+    cursor: grabbing;
 }
 
 .config-card {
     position: relative;
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 280px;
+    max-width: 360px;
     padding: 24px;
     background: linear-gradient(145deg, #202b35, #171e25);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
     transition: .25s;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (min-width: 640px) {
+    .config-card {
+        width: calc(50% - 9px);
+    }
+}
+
+@media (min-width: 1050px) {
+    .config-card {
+        width: calc(33.333% - 12px);
+    }
 }
 
 .config-card:hover {
@@ -642,6 +677,7 @@ button, a {
     color: var(--muted);
     font-size: .86rem;
     margin-bottom: 22px;
+    flex: 1;
 }
 
 .config-specs li {
@@ -672,6 +708,118 @@ button, a {
 .config-bottom .btn {
     padding: 10px 14px;
     font-size: .8rem;
+}
+
+/* Slider Navigation Buttons */
+.config-slider__btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    color: var(--text);
+    cursor: pointer;
+    transition: .25s ease;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.config-slider__btn:hover {
+    background: var(--card-hover);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 4px 20px rgba(54,217,237,.15);
+}
+
+.config-slider__btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.config-slider__btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.config-slider__btn--prev {
+    left: -24px;
+}
+
+.config-slider__btn--next {
+    right: -24px;
+}
+
+@media (max-width: 700px) {
+    .config-slider__btn {
+        width: 40px;
+        height: 40px;
+    }
+    .config-slider__btn--prev {
+        left: -16px;
+    }
+    .config-slider__btn--next {
+        right: -16px;
+    }
+    .config-slider__btn svg {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .config-slider__btn {
+        display: none;
+    }
+}
+
+/* Slider Dots */
+.config-slider__dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 0 12px;
+}
+
+.config-slider__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: .25s ease;
+}
+
+.config-slider__dot:hover {
+    background: rgba(54,217,237,.5);
+}
+
+.config-slider__dot.active {
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(54,217,237,.4);
+    transform: scale(1.15);
+}
+
+.config-slider__dot:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .config-slider__track {
+        transition: none;
+    }
+    .config-slider__dot {
+        transition: none;
+    }
 }
 
 /* ===== Наши работы и отзывы ===== */
