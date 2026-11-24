@@ -1,0 +1,1489 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Upgrader — сборка персональных компьютеров на заказ. Подбор комплектующих, профессиональная сборка, тестирование и апгрейд ПК.">
+    <meta name="theme-color" content="#101419">
+    <title>Upgrader — собери мощность под себя</title>
+
+    <style>
+        :root {
+            --bg: #101419;
+            --bg-secondary: #171e25;
+            --card: #1c252e;
+            --card-hover: #222f39;
+            --accent: #36d9ed;
+            --accent-dark: #16b8ce;
+            --text: #f2f6f8;
+            --muted: #aab6c0;
+            --border: rgba(255,255,255,.09);
+            --radius: 18px;
+            --container: 1180px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 90px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        button, a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            width: min(100% - 36px, var(--container));
+            margin-inline: auto;
+        }
+
+        .section {
+            padding: 76px 0;
+        }
+
+        .section-label {
+            display: inline-block;
+            color: var(--accent);
+            font-size: .78rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            line-height: 1.15;
+            letter-spacing: -1.5px;
+            margin-bottom: 18px;
+        }
+
+        .section-description {
+            max-width: 650px;
+            color: var(--muted);
+            margin-bottom: 38px;
+        }
+
+        .accent {
+            color: var(--accent);
+        }
+
+        /* ===== Кнопки ===== */
+        .btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            gap: 9px;
+            padding: 14px 23px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            font-weight: 750;
+            font-size: .94rem;
+            cursor: pointer;
+            transition: .25s ease;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #08171c;
+        }
+
+        .btn-primary:hover {
+            background: #74edfa;
+            box-shadow: 0 0 28px rgba(54,217,237,.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            border-color: var(--border);
+            color: var(--text);
+            background: rgba(255,255,255,.025);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* ===== Шапка и навигация ===== */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(16,20,25,.94);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            min-height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.45rem;
+            font-weight: 900;
+            letter-spacing: -1px;
+            flex-shrink: 0;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            background: var(--accent);
+            color: #101419;
+            border-radius: 10px;
+            font-size: 1.2rem;
+        }
+
+        .nav {
+            display: none;
+            position: absolute;
+            top: 72px;
+            left: 0;
+            width: 100%;
+            padding: 22px;
+            background: #171e25;
+            border-bottom: 1px solid var(--border);
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .nav.active {
+            display: flex;
+        }
+
+        .nav a {
+            color: var(--muted);
+            font-size: .94rem;
+            transition: color .2s;
+        }
+
+        .nav a:hover {
+            color: var(--accent);
+        }
+
+        .header-action {
+            display: none;
+        }
+
+        .burger {
+            width: 43px;
+            height: 43px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            background: var(--card);
+            font-size: 1.35rem;
+            cursor: pointer;
+        }
+
+        /* ===== Первый экран ===== */
+        .hero {
+            position: relative;
+            padding: 88px 0 75px;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse at 85% 35%, rgba(21,184,206,.13), transparent 38%),
+                radial-gradient(ellipse at 5% 80%, rgba(54,217,237,.07), transparent 35%);
+        }
+
+        .hero-grid {
+            display: grid;
+            gap: 45px;
+            align-items: center;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 13px;
+            border: 1px solid rgba(54,217,237,.25);
+            border-radius: 30px;
+            background: rgba(54,217,237,.07);
+            color: var(--accent);
+            font-size: .8rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.8rem, 8vw, 5.7rem);
+            line-height: .99;
+            letter-spacing: -4px;
+            margin-bottom: 25px;
+        }
+
+        .hero-description {
+            max-width: 530px;
+            color: var(--muted);
+            font-size: 1.08rem;
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 52px;
+            max-width: 520px;
+        }
+
+        .stat-number {
+            font-size: clamp(1.45rem, 4vw, 2rem);
+            font-weight: 900;
+            color: var(--accent);
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: .78rem;
+            margin-top: 5px;
+        }
+
+        /* Декоративный компьютер без внешних изображений */
+        .hero-visual {
+            min-height: 330px;
+            display: grid;
+            place-items: center;
+            position: relative;
+        }
+
+        .pc-case {
+            position: relative;
+            width: min(270px, 75vw);
+            height: 350px;
+            padding: 15px;
+            border: 2px solid #52636f;
+            border-radius: 20px;
+            background: linear-gradient(145deg, #293741, #111920);
+            box-shadow: 25px 30px 80px rgba(0,0,0,.4), 0 0 50px rgba(54,217,237,.12);
+            transform: rotate(-4deg);
+        }
+
+        .pc-glass {
+            height: 100%;
+            border: 1px solid rgba(255,255,255,.13);
+            border-radius: 12px;
+            background: linear-gradient(145deg, rgba(54,217,237,.07), rgba(255,255,255,.015));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .fan {
+            width: 94px;
+            height: 94px;
+            border: 8px solid rgba(54,217,237,.16);
+            border-top-color: var(--accent);
+            border-bottom-color: var(--accent);
+            border-radius: 50%;
+            box-shadow: 0 0 25px rgba(54,217,237,.3);
+            animation: spin 7s linear infinite;
+        }
+
+        .fan:nth-child(2) {
+            width: 65px;
+            height: 65px;
+            animation-duration: 5s;
+        }
+
+        .pc-caption {
+            position: absolute;
+            bottom: -22px;
+            right: -25px;
+            padding: 13px 17px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: #202a33;
+            box-shadow: 0 10px 30px rgba(0,0,0,.3);
+            font-size: .83rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== О нас ===== */
+        .about-grid {
+            display: grid;
+            gap: 25px;
+        }
+
+        .about-text p {
+            color: var(--muted);
+            margin-bottom: 17px;
+        }
+
+        .about-highlight {
+            padding: 27px;
+            background: linear-gradient(135deg, rgba(54,217,237,.12), rgba(54,217,237,.025));
+            border: 1px solid rgba(54,217,237,.18);
+            border-radius: var(--radius);
+        }
+
+        .about-highlight strong {
+            display: block;
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .about-highlight p {
+            color: var(--muted);
+        }
+
+        /* ===== Преимущества ===== */
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+            gap: 16px;
+        }
+
+        .advantage-card {
+            padding: 26px 23px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+            transition: .25s ease;
+        }
+
+        .advantage-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(54,217,237,.55);
+            background: var(--card-hover);
+            box-shadow: 0 12px 35px rgba(54,217,237,.07);
+        }
+
+        .advantage-icon {
+            width: 53px;
+            height: 53px;
+            display: grid;
+            place-items: center;
+            background: rgba(54,217,237,.1);
+            border-radius: 14px;
+            font-size: 1.65rem;
+            margin-bottom: 19px;
+        }
+
+        .advantage-card h3 {
+            font-size: 1.08rem;
+            margin-bottom: 10px;
+        }
+
+        .advantage-card p {
+            color: var(--muted);
+            font-size: .9rem;
+        }
+
+        /* ===== Услуги ===== */
+        .services {
+            background: var(--bg-secondary);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+            gap: 17px;
+        }
+
+        .service-card {
+            padding: 28px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            transition: .25s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .service-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+
+        .service-card > p {
+            min-height: 55px;
+            color: var(--muted);
+            font-size: .9rem;
+            margin-bottom: 20px;
+        }
+
+        .service-card ul {
+            list-style: none;
+            display: grid;
+            gap: 10px;
+            margin-bottom: 26px;
+            flex: 1;
+        }
+
+        .service-card li {
+            color: #c5d0d8;
+            font-size: .88rem;
+        }
+
+        .service-card li::before {
+            content: "✓";
+            color: var(--accent);
+            margin-right: 9px;
+            font-weight: 900;
+        }
+
+        .service-price {
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+            font-size: 1.7rem;
+            font-weight: 900;
+        }
+
+        .service-price small {
+            font-size: .75rem;
+            font-weight: 400;
+            color: var(--muted);
+        }
+
+        /* ===== Конфигурации ===== */
+        .configs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+            gap: 18px;
+        }
+
+        .config-card {
+            position: relative;
+            padding: 24px;
+            background: linear-gradient(145deg, #202b35, #171e25);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: .25s;
+        }
+
+        .config-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(54,217,237,.6);
+            box-shadow: 0 12px 35px rgba(54,217,237,.08);
+        }
+
+        .config-icon {
+            width: 100%;
+            height: 105px;
+            display: grid;
+            place-items: center;
+            background: radial-gradient(circle, rgba(54,217,237,.13), transparent 70%);
+            font-size: 3.7rem;
+            margin-bottom: 12px;
+        }
+
+        .config-category {
+            color: var(--accent);
+            font-size: .73rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .config-card h3 {
+            font-size: 1.2rem;
+            margin: 6px 0 12px;
+        }
+
+        .config-specs {
+            list-style: none;
+            display: grid;
+            gap: 8px;
+            color: var(--muted);
+            font-size: .86rem;
+            margin-bottom: 22px;
+        }
+
+        .config-specs li {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,.05);
+            padding-bottom: 7px;
+        }
+
+        .config-specs span:last-child {
+            color: var(--text);
+            text-align: right;
+        }
+
+        .config-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-price {
+            font-size: 1.45rem;
+            font-weight: 900;
+        }
+
+        .config-bottom .btn {
+            padding: 10px 14px;
+            font-size: .8rem;
+        }
+
+        /* ===== Отзывы ===== */
+        .reviews {
+            background: var(--bg-secondary);
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr));
+            gap: 17px;
+        }
+
+        .review-card {
+            padding: 26px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--card);
+        }
+
+        .review-stars {
+            color: #ffd166;
+            letter-spacing: 3px;
+            margin-bottom: 16px;
+        }
+
+        .review-card blockquote {
+            color: #d0d9df;
+            font-size: .93rem;
+            margin-bottom: 23px;
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .review-avatar {
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: rgba(54,217,237,.15);
+            color: var(--accent);
+            font-weight: 900;
+        }
+
+        .review-author strong {
+            display: block;
+            font-size: .9rem;
+        }
+
+        .review-author small {
+            color: var(--muted);
+        }
+
+        /* ===== Контакты и форма ===== */
+        .contacts-grid {
+            display: grid;
+            gap: 35px;
+        }
+
+        .contact-info {
+            display: grid;
+            gap: 17px;
+        }
+
+        .contact-item {
+            padding: 19px;
+            border-radius: 13px;
+            background: var(--card);
+            border: 1px solid var(--border);
+        }
+
+        .contact-item strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .contact-item span,
+        .contact-item a {
+            color: var(--muted);
+            font-size: .92rem;
+        }
+
+        .contact-item a:hover {
+            color: var(--accent);
+        }
+
+        .map-placeholder {
+            min-height: 180px;
+            display: grid;
+            place-items: center;
+            text-align: center;
+            padding: 20px;
+            background:
+                linear-gradient(rgba(54,217,237,.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(54,217,237,.035) 1px, transparent 1px),
+                #1b252e;
+            background-size: 28px 28px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--muted);
+        }
+
+        .map-placeholder span {
+            display: block;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .form-card {
+            padding: 26px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+        }
+
+        .form-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .form-card > p {
+            color: var(--muted);
+            font-size: .9rem;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 17px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: .86rem;
+            font-weight: 650;
+            margin-bottom: 7px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 13px 14px;
+            background: #121920;
+            border: 1px solid #394650;
+            border-radius: 10px;
+            color: var(--text);
+            outline: none;
+            transition: border-color .2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(54,217,237,.1);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #84919c;
+        }
+
+        .form-group textarea {
+            min-height: 105px;
+            resize: vertical;
+        }
+
+        .form-note {
+            color: var(--muted);
+            font-size: .75rem;
+            margin-top: 13px;
+        }
+
+        .form-card .btn {
+            width: 100%;
+        }
+
+        /* ===== Подвал ===== */
+        .footer {
+            padding: 35px 0;
+            background: #0b1014;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .footer-description {
+            max-width: 320px;
+            color: var(--muted);
+            font-size: .84rem;
+            margin-top: 12px;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        .footer-links a {
+            color: var(--muted);
+            font-size: .88rem;
+            transition: color .2s;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            color: #84919c;
+            font-size: .8rem;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* ===== Адаптация для планшетов и ПК ===== */
+        @media (min-width: 700px) {
+            .section {
+                padding: 100px 0;
+            }
+
+            .hero {
+                padding: 110px 0 90px;
+            }
+
+            .hero-grid {
+                grid-template-columns: 1.2fr .8fr;
+            }
+
+            .about-grid {
+                grid-template-columns: 1.4fr .6fr;
+                align-items: center;
+                gap: 60px;
+            }
+
+            .contacts-grid {
+                grid-template-columns: 1fr 1fr;
+                align-items: start;
+            }
+
+            .form-card {
+                padding: 34px;
+            }
+
+            .footer-inner {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        @media (min-width: 1050px) {
+            .nav {
+                position: static;
+                display: flex;
+                width: auto;
+                padding: 0;
+                background: transparent;
+                border: 0;
+                flex-direction: row;
+                align-items: center;
+                gap: 21px;
+            }
+
+            .header-action {
+                display: inline-flex;
+                padding: 11px 16px;
+                font-size: .83rem;
+            }
+
+            .burger {
+                display: none;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .container {
+                width: min(100% - 26px, var(--container));
+            }
+
+            .hero h1 {
+                letter-spacing: -2px;
+            }
+
+            .hero-buttons .btn {
+                width: 100%;
+            }
+
+            .hero-stats {
+                gap: 7px;
+            }
+
+            .stat-label {
+                font-size: .69rem;
+            }
+
+            .config-bottom {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        /* Учитываем настройки пользователя, отключающие анимацию */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                scroll-behavior: auto !important;
+                animation-duration: .01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: .01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="container header-inner">
+            <a href="#home" class="logo" aria-label="Upgrader — на главную">
+                <span class="logo-icon">⚡</span>
+                Upgrader
+            </a>
+
+            <nav class="nav" id="navigation" aria-label="Основная навигация">
+                <a href="#about">О нас</a>
+                <a href="#advantages">Преимущества</a>
+                <a href="#services">Услуги</a>
+                <a href="#configurations">Конфигурации</a>
+                <a href="#reviews">Отзывы</a>
+                <a href="#contacts">Контакты</a>
+            </nav>
+
+            <a href="#contacts" class="btn btn-primary header-action">Оставить заявку</a>
+
+            <button class="burger" id="burger" type="button"
+                    aria-label="Открыть меню" aria-expanded="false"
+                    aria-controls="navigation">☰</button>
+        </div>
+    </header>
+
+    <main>
+        <!-- Главный экран -->
+        <section class="hero" id="home">
+            <div class="container hero-grid">
+                <div class="hero-content">
+                    <div class="hero-tag">⚡ Мастерская персональных компьютеров</div>
+
+                    <h1>
+                        Твоя мощность.<br>
+                        <span class="accent">Твои правила.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Собираем компьютеры, которые справляются с любыми задачами.
+                        Подберём комплектующие под твой бюджет, аккуратно соберём
+                        и проверим каждый компонент.
+                    </p>
+
+                    <div class="hero-buttons">
+                        <a href="#contacts" class="btn btn-primary">Рассчитать сборку →</a>
+                        <a href="#configurations" class="btn btn-outline">Смотреть конфигурации</a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div>
+                            <div class="stat-number">850+</div>
+                            <div class="stat-label">Собранных ПК</div>
+                        </div>
+                        <div>
+                            <div class="stat-number">24 мес.</div>
+                            <div class="stat-label">Гарантия на сборку</div>
+                        </div>
+                        <div>
+                            <div class="stat-number">2–5</div>
+                            <div class="stat-label">Дней на сборку</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="hero-visual" aria-label="Изображение игрового компьютера">
+                    <div class="pc-case">
+                        <div class="pc-glass">
+                            <div class="fan"></div>
+                            <div class="fan"></div>
+                        </div>
+                        <div class="pc-caption">⚡ Собрано с умом</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- О мастерской -->
+        <section class="section" id="about">
+            <div class="container about-grid">
+                <div class="about-text">
+                    <span class="section-label">Кто мы такие</span>
+                    <h2 class="section-title">Не просто собираем ПК.<br>
+                        <span class="accent">Создаём возможности.</span>
+                    </h2>
+
+                    <p>
+                        Upgrader появился из простого желания — сделать качественные
+                        компьютеры доступными каждому. Мы начали с небольших домашних
+                        сборок для друзей, а со временем превратили увлечение
+                        компьютерным железом в полноценную мастерскую.
+                    </p>
+
+                    <p>
+                        Сегодня мы помогаем геймерам, студентам, дизайнерам и
+                        специалистам находить оптимальные решения для своих задач.
+                        Не навязываем дорогие комплектующие и не переплачиваем
+                        за ненужные характеристики.
+                    </p>
+
+                    <p>
+                        Каждый компьютер проходит проверку перед выдачей.
+                        Мы отвечаем за результат и остаёмся на связи после покупки.
+                    </p>
+                </div>
+
+                <div class="about-highlight">
+                    <strong>100%</strong>
+                    <h3>Индивидуальный подход</h3>
+                    <p>
+                        Учитываем твои задачи, бюджет и пожелания.
+                        Никаких случайных комплектующих и сомнительных решений.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Преимущества -->
+        <section class="section" id="advantages">
+            <div class="container">
+                <span class="section-label">Почему Upgrader</span>
+                <h2 class="section-title">С нами всё <span class="accent">под контролем</span></h2>
+                <p class="section-description">
+                    Продумываем каждую деталь — от выбора процессора до последнего теста.
+                </p>
+
+                <div class="advantages-grid">
+                    <article class="advantage-card">
+                        <div class="advantage-icon">🧩</div>
+                        <h3>Совместимость компонентов</h3>
+                        <p>
+                            Проверяем комплектующие на совместимость, чтобы все
+                            элементы системы работали вместе без проблем.
+                        </p>
+                    </article>
+
+                    <article class="advantage-card">
+                        <div class="advantage-icon">🔧</div>
+                        <h3>Аккуратная сборка</h3>
+                        <p>
+                            Продуманная прокладка кабелей, правильное охлаждение
+                            и внимание к каждой мелочи.
+                        </p>
+                    </article>
+
+                    <article class="advantage-card">
+                        <div class="advantage-icon">🧪</div>
+                        <h3>Стресс-тестирование</h3>
+                        <p>
+                            Проверяем температуры, стабильность и производительность
+                            под нагрузкой перед передачей компьютера.
+                        </p>
+                    </article>
+
+                    <article class="advantage-card">
+                        <div class="advantage-icon">🛡️</div>
+                        <h3>Гарантия и поддержка</h3>
+                        <p>
+                            Даём гарантию на выполненные работы и помогаем
+                            разобраться с вопросами после покупки.
+                        </p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Услуги и стоимость -->
+        <section class="section services" id="services">
+            <div class="container">
+                <span class="section-label">Что мы предлагаем</span>
+                <h2 class="section-title">Услуги и <span class="accent">цены</span></h2>
+                <p class="section-description">
+                    Выбирай подходящий вариант. Стоимость комплектующих
+                    рассчитывается отдельно.
+                </p>
+
+                <div class="services-grid">
+                    <article class="service-card">
+                        <h3>Базовая сборка</h3>
+                        <p>Соберём компьютер из твоих комплектующих.</p>
+
+                        <ul>
+                            <li>Проверка совместимости</li>
+                            <li>Установка процессора и охлаждения</li>
+                            <li>Монтаж материнской платы</li>
+                            <li>Подключение всех компонентов</li>
+                            <li>Базовая проверка запуска</li>
+                        </ul>
+
+                        <div class="service-price">
+                            3 500 ₽ <small>/ за работу</small>
+                        </div>
+                    </article>
+
+                    <article class="service-card">
+                        <h3>Сборка под ключ</h3>
+                        <p>Полностью готовый к использованию компьютер.</p>
+
+                        <ul>
+                            <li>Подбор комплектующих</li>
+                            <li>Профессиональная сборка</li>
+                            <li>Аккуратный кабель-менеджмент</li>
+                            <li>Стресс-тестирование</li>
+                            <li>Установка и настройка ОС</li>
+                            <li>Драйверы и базовое ПО</li>
+                        </ul>
+
+                        <div class="service-price">
+                            6 500 ₽ <small>/ за работу</small>
+                        </div>
+                    </article>
+
+                    <article class="service-card">
+                        <h3>Апгрейд и обслуживание</h3>
+                        <p>Обновим существующий ПК и вернём ему скорость.</p>
+
+                        <ul>
+                            <li>Диагностика компьютера</li>
+                            <li>Замена комплектующих</li>
+                            <li>Чистка от пыли</li>
+                            <li>Замена термопасты</li>
+                            <li>Настройка системы</li>
+                        </ul>
+
+                        <div class="service-price">
+                            от 1 500 ₽ <small>/ за работу</small>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Готовые конфигурации -->
+        <section class="section" id="configurations">
+            <div class="container">
+                <span class="section-label">Подобрали за тебя</span>
+                <h2 class="section-title">Готовые <span class="accent">конфигурации</span></h2>
+                <p class="section-description">
+                    Несколько проверенных вариантов под разные задачи.
+                    Любую конфигурацию можно изменить под твои пожелания.
+                </p>
+
+                <div class="configs-grid">
+                    <article class="config-card">
+                        <div class="config-icon">💻</div>
+                        <span class="config-category">Учёба и офис</span>
+                        <h3>Start Basic</h3>
+
+                        <ul class="config-specs">
+                            <li><span>Процессор</span><span>Ryzen 5 5600G</span></li>
+                            <li><span>Видеокарта</span><span>Встроенная</span></li>
+                            <li><span>ОЗУ</span><span>16 ГБ DDR4</span></li>
+                            <li><span>Накопитель</span><span>SSD 500 ГБ</span></li>
+                        </ul>
+
+                        <div class="config-bottom">
+                            <span class="config-price">от 35 000 ₽</span>
+                            <a href="#contacts" class="btn btn-outline">Выбрать</a>
+                        </div>
+                    </article>
+
+                    <article class="config-card">
+                        <div class="config-icon">🎮</div>
+                        <span class="config-category">Игры Full HD</span>
+                        <h3>Game Starter</h3>
+
+                        <ul class="config-specs">
+                            <li><span>Процессор</span><span>Ryzen 5 5600</span></li>
+                            <li><span>Видеокарта</span><span>RTX 4060</span></li>
+                            <li><span>ОЗУ</span><span>16 ГБ DDR4</span></li>
+                            <li><span>Накопитель</span><span>SSD 1 ТБ</span></li>
+                        </ul>
+
+                        <div class="config-bottom">
+                            <span class="config-price">от 72 000 ₽</span>
+                            <a href="#contacts" class="btn btn-outline">Выбрать</a>
+                        </div>
+                    </article>
+
+                    <article class="config-card">
+                        <div class="config-icon">🚀</div>
+                        <span class="config-category">Игры 1440p</span>
+                        <h3>Game Pro</h3>
+
+                        <ul class="config-specs">
+                            <li><span>Процессор</span><span>Ryzen 5 7600</span></li>
+                            <li><span>Видеокарта</span><span>RTX 4070 Super</span></li>
+                            <li><span>ОЗУ</span><span>32 ГБ DDR5</span></li>
+                            <li><span>Накопитель</span><span>SSD 1 ТБ</span></li>
+                        </ul>
+
+                        <div class="config-bottom">
+                            <span class="config-price">от 125 000 ₽</span>
+                            <a href="#contacts" class="btn btn-outline">Выбрать</a>
+                        </div>
+                    </article>
+
+                    <article class="config-card">
+                        <div class="config-icon">🎬</div>
+                        <span class="config-category">Монтаж и дизайн</span>
+                        <h3>Creator Studio</h3>
+
+                        <ul class="config-specs">
+                            <li><span>Процессор</span><span>Core i7-14700F</span></li>
+                            <li><span>Видеокарта</span><span>RTX 4070</span></li>
+                            <li><span>ОЗУ</span><span>32 ГБ DDR5</span></li>
+                            <li><span>Накопитель</span><span>SSD 2 ТБ</span></li>
+                        </ul>
+
+                        <div class="config-bottom">
+                            <span class="config-price">от 145 000 ₽</span>
+                            <a href="#contacts" class="btn btn-outline">Выбрать</a>
+                        </div>
+                    </article>
+
+                    <article class="config-card">
+                        <div class="config-icon">⚡</div>
+                        <span class="config-category">Максимальная мощность</span>
+                        <h3>Ultimate X</h3>
+
+                        <ul class="config-specs">
+                            <li><span>Процессор</span><span>Ryzen 7 7800X3D</span></li>
+                            <li><span>Видеокарта</span><span>RTX 4080 Super</span></li>
+                            <li><span>ОЗУ</span><span>64 ГБ DDR5</span></li>
+                            <li><span>Накопитель</span><span>SSD 2 ТБ</span></li>
+                        </ul>
+
+                        <div class="config-bottom">
+                            <span class="config-price">от 220 000 ₽</span>
+                            <a href="#contacts" class="btn btn-outline">Выбрать</a>
+                        </div>
+                    </article>
+
+                    <article class="config-card">
+                        <div class="config-icon">🖥️</div>
+                        <span class="config-category">Работа и многозадачность</span>
+                        <h3>Office Expert</h3>
+
+                        <ul class="config-specs">
+                            <li><span>Процессор</span><span>Core i5-12400</span></li>
+                            <li><span>Видеокарта</span><span>Intel UHD</span></li>
+                            <li><span>ОЗУ</span><span>16 ГБ DDR4</span></li>
+                            <li><span>Накопитель</span><span>SSD 1 ТБ</span></li>
+                        </ul>
+
+                        <div class="config-bottom">
+                            <span class="config-price">от 42 000 ₽</span>
+                            <a href="#contacts" class="btn btn-outline">Выбрать</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Отзывы клиентов -->
+        <section class="section reviews" id="reviews">
+            <div class="container">
+                <span class="section-label">Нам доверяют</span>
+                <h2 class="section-title">Что говорят <span class="accent">клиенты</span></h2>
+                <p class="section-description">
+                    Главное подтверждение качества нашей работы — довольные владельцы ПК.
+                </p>
+
+                <div class="reviews-grid">
+                    <article class="review-card">
+                        <div class="review-stars" aria-label="5 из 5 звёзд">★★★★★</div>
+                        <blockquote>
+                            «Давно хотел обновить компьютер, но совершенно не разбирался
+                            в комплектующих. Ребята всё объяснили, подобрали отличный
+                            вариант под мой бюджет. Собрали за три дня. Всё работает идеально!»
+                        </blockquote>
+
+                        <div class="review-author">
+                            <div class="review-avatar">А</div>
+                            <div>
+                                <strong>Александр К.</strong>
+                                <small>Игровой ПК</small>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="review-card">
+                        <div class="review-stars" aria-label="5 из 5 звёзд">★★★★★</div>
+                        <blockquote>
+                            «Заказывала компьютер для учёбы и работы с графикой.
+                            Очень понравилось, что не пытались продать самое дорогое.
+                            Подобрали именно то, что нужно. Отдельное спасибо за кабели —
+                            внутри всё идеально!»
+                        </blockquote>
+
+                        <div class="review-author">
+                            <div class="review-avatar">М</div>
+                            <div>
+                                <strong>Мария С.</strong>
+                                <small>Рабочая станция</small>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="review-card">
+                        <div class="review-stars" aria-label="5 из 5 звёзд">★★★★★</div>
+                        <blockquote>
+                            «Принёс старый компьютер на апгрейд. Провели диагностику,
+                            заменили накопитель и добавили оперативную память.
+                            Теперь работает намного быстрее. Быстро, качественно и без
+                            лишних расходов».
+                        </blockquote>
+
+                        <div class="review-author">
+                            <div class="review-avatar">Д</div>
+                            <div>
+                                <strong>Дмитрий В.</strong>
+                                <small>Апгрейд ПК</small>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Контакты и форма заявки -->
+        <section class="section" id="contacts">
+            <div class="container">
+                <span class="section-label">Мы на связи</span>
+                <h2 class="section-title">Давай соберём твой <span class="accent">ПК</span></h2>
+                <p class="section-description">
+                    Расскажи, для чего тебе компьютер и какой бюджет планируешь.
+                    Мы свяжемся с тобой и предложим подходящие варианты.
+                </p>
+
+                <div class="contacts-grid">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <strong>📍 Адрес мастерской</strong>
+                            <span>г. Санкт-Петербург, Лиговский проспект, 74</span>
+                        </div>
+
+                        <div class="contact-item">
+                            <strong>🕒 Время работы</strong>
+                            <span>Пн–Пт: 10:00–20:00<br>Сб–Вс: 11:00–18:00</span>
+                        </div>
+
+                        <div class="contact-item">
+                            <strong>📞 Телефон</strong>
+                            <a href="tel:+78126034567">+7 (812) 603-45-67</a>
+                        </div>
+
+                        <div class="contact-item">
+                            <strong>✉️ Электронная почта</strong>
+                            <a href="mailto:hello@kulibin-pc.ru">hello@upgrader-pc.ru</a>
+                        </div>
+
+                        <div class="map-placeholder">
+                            <div>
+                                <span>📍</span>
+                                <strong>Upgrader — мастерская ПК</strong>
+                                <p>Лиговский проспект, 74, Санкт-Петербург</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form class="form-card" action="#" method="get">
+                        <h3>Оставить заявку</h3>
+                        <p>Заполни форму — мы поможем рассчитать стоимость.</p>
+
+                        <div class="form-group">
+                            <label for="name">Твоё имя *</label>
+                            <input type="text" id="name" name="name"
+                                   placeholder="Как к тебе обращаться?"
+                                   minlength="2" maxlength="60" autocomplete="name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="contact">Телефон или email *</label>
+                            <input type="text" id="contact" name="contact"
+                                   placeholder="+7 (999) 123-45-67 или email"
+                                   minlength="5" maxlength="100"
+                                   autocomplete="email" required
+                                   pattern="(?:\+?[0-9\s()\-]{7,20}|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,})"
+                                   title="Укажите корректный телефон или email">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="type">Что тебя интересует? *</label>
+                            <select id="type" name="type" required>
+                                <option value="" disabled selected>Выбери тип услуги</option>
+                                <option value="gaming">Игровой компьютер</option>
+                                <option value="work">ПК для работы и учёбы</option>
+                                <option value="creator">Компьютер для монтажа и дизайна</option>
+                                <option value="upgrade">Апгрейд существующего ПК</option>
+                                <option value="other">Другое</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="budget">Примерный бюджет</label>
+                            <select id="budget" name="budget">
+                                <option value="">Пока не определился</option>
+                                <option value="under-50">До 50 000 ₽</option>
+                                <option value="50-80">50 000–80 000 ₽</option>
+                                <option value="80-120">80 000–120 000 ₽</option>
+                                <option value="120-180">120 000–180 000 ₽</option>
+                                <option value="180-plus">От 180 000 ₽</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="comment">Комментарий</label>
+                            <textarea id="comment" name="comment"
+                                      maxlength="1000"
+                                      placeholder="Расскажи подробнее о своих задачах и пожеланиях..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            Отправить заявку →
+                        </button>
+
+                        <p class="form-note">
+                            * Обязательные поля. Демонстрационная форма:
+                            данные не отправляются на сервер.
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Подвал сайта -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div>
+                    <a href="#home" class="logo">
+                        <span class="logo-icon">⚡</span>
+                        Upgrader
+                    </a>
+                    <p class="footer-description">
+                        Собираем компьютеры, которые работают на твои цели.
+                        Технологии, качество и внимание к деталям.
+                    </p>
+                </div>
+
+                <div class="footer-links">
+                    <a href="#about">О нас</a>
+                    <a href="#services">Услуги</a>
+                    <a href="#configurations">Конфигурации</a>
+                    <a href="#contacts">Контакты</a>
+                    <a href="https://vk.com/" target="_blank" rel="noopener noreferrer">ВКонтакте</a>
+                    <a href="https://t.me/" target="_blank" rel="noopener noreferrer">Telegram</a>
+                </div>
+            </div>
+
+            <div class="copyright">
+                © 2026 Upgrader. Все права защищены.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Минимальный JavaScript для мобильного меню -->
+    <script>
+        const burger = document.getElementById('burger');
+        const navigation = document.getElementById('navigation');
+
+        burger.addEventListener('click', () => {
+            const isOpen = navigation.classList.toggle('active');
+            burger.setAttribute('aria-expanded', isOpen);
+            burger.textContent = isOpen ? '✕' : '☰';
+            burger.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'Открыть меню');
+        });
+
+        navigation.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navigation.classList.remove('active');
+                burger.setAttribute('aria-expanded', 'false');
+                burger.textContent = '☰';
+                burger.setAttribute('aria-label', 'Открыть меню');
+            });
+        });
+    </script>
+
+</body>
+</html>
