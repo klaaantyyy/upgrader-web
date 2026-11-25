@@ -18,8 +18,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
-    name: Validate website
+  validate-resources:
+    name: Validate website resources
     runs-on: ubuntu-latest
 
     steps:
@@ -31,12 +31,31 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Check website files
+      - name: Check local resources
         run: python scripts/check_site.py
+
+  validate-html:
+    name: Validate HTML markup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Check HTML with HTMLHint
+        run: npx --yes htmlhint index.html
 
   deploy:
     name: Deploy website
-    needs: validate
+    needs:
+      - validate-resources
+      - validate-html
+
     runs-on: ubuntu-latest
 
     environment:
