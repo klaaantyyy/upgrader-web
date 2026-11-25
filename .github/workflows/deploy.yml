@@ -50,17 +50,13 @@ jobs:
       - name: Check HTML with HTMLHint
         run: npx --yes htmlhint index.html
 
-  deploy:
-    name: Deploy website
+  build:
+    name: Prepare website artifact
     needs:
       - validate-resources
       - validate-html
 
     runs-on: ubuntu-latest
-
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout repository
@@ -74,6 +70,17 @@ jobs:
         with:
           path: "."
 
+  deploy:
+    name: Deploy website
+    needs: build
+
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
